@@ -23,7 +23,19 @@ update_system() {
     echo "Updating system..." | log_and_display "$LOG_DIR/update_system.log"
     sudo apt update && sudo apt upgrade -y | log_and_display "$LOG_DIR/update_system.log"
     check_success "System Update"
+
+    echo "Setting swappiness to 0..." | log_and_display "$LOG_DIR/update_system.log"
+    # Apply the swappiness setting immediately
+    sudo sysctl vm.swappiness=0 | log_and_display "$LOG_DIR/update_system.log"
+    # Make the swappiness setting persistent across reboots
+    if grep -q "vm.swappiness" /etc/sysctl.conf; then
+        sudo sed -i 's/^vm.swappiness=.*/vm.swappiness=0/' /etc/sysctl.conf
+    else
+        echo "vm.swappiness=0" | sudo tee -a /etc/sysctl.conf > /dev/null
+    fi
+    check_success "Swappiness Configuration"
 }
+
 
 # Install build-essential
 install_build_essential() {
@@ -140,8 +152,6 @@ install_windsurf() {
     sudo apt-get upgrade -y windsurf
 }
 
-
-
 # Install qBittorrent
 install_qbittorrent() {
     echo "Installing qBittorrent..." | log_and_display "$LOG_DIR/qbittorrent.log"
@@ -171,7 +181,9 @@ install_warp_cli() {
     } | tee "$LOG_FILE"
     check_success "warp-cli"
 }
-
+install_tailscale(){
+    curl -fsSL https://tailscale.com/install.sh | sh
+}
 
 main() {
     update_system
@@ -189,10 +201,10 @@ main() {
     install_spotify
     install_libreoffice
     install_windsurf
-
     install_qbittorrent
     install_jellyfin
     install_warp_cli
+    install_tailscale
 }
 
 main
