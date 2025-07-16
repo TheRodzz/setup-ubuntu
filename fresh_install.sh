@@ -82,11 +82,8 @@ install_ffmpeg() {
 # Install Python 3.12 and pip
 install_python_pip() {
     echo "Installing Python 3.12 and pip..." | log_and_display "$LOG_DIR/python_pip.log"
-    sudo add-apt-repository -y ppa:deadsnakes/ppa | log_and_display "$LOG_DIR/python_pip.log"
-    sudo apt update | log_and_display "$LOG_DIR/python_pip.log"
-    sudo apt install -y python3.12 python3.12-venv python3.12-dev | log_and_display "$LOG_DIR/python_pip.log"
-    curl -sS https://bootstrap.pypa.io/get-pip.py | python3.12 | log_and_display "$LOG_DIR/python_pip.log"
-    check_success "Python 3.12 and pip"
+    sudo apt update
+    sudo apt install -y python3 python3-venv python3-dev python3-pip
 }
 
 # Install Docker and Docker Compose
