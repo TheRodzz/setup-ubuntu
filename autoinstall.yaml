@@ -1,0 +1,66 @@
+#cloud-config
+autoinstall:
+  version: 1
+  interactive-sections: []  # silent mode
+
+  locale: en_US.UTF-8
+  keyboard:
+    layout: us
+    variant: ""
+  timezone: UTC
+
+  identity:
+    hostname: ubuntu24
+    username: vidhu
+    password: "$6$l7srLlTxTt16Trw.$WHC1PnaQ4irXXhU8L0i/zW/3YwxOad19wJx4N3FrPphIE5IGxYG4CdLwGTRupG/iqlhPP.E85KJUtXzbvbZQ8."
+  # ssh:
+  #   install-server: yes
+  #   allow-pw: false
+  #   authorized-keys:
+  #     - ssh-ed25519 AAAA...
+
+  network:
+    network:
+      version: 2
+      ethernets:
+        all-dhcp: {}
+
+  storage:
+    layout:
+      name: direct
+
+  packages:
+    - build-essential
+    - openjdk-17-jdk
+    - nodejs
+    - npm
+    - vim
+    - tmux
+    - ffmpeg
+    - python3
+    - python3-venv
+    - python3-dev
+    - python3-pip
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+    - git
+    - vlc
+    - libreoffice
+    - qbittorrent
+    - code  # VS Code
+
+  snaps:
+    - name: spotify
+      classic: false
+
+  refresh-installer:
+    update: true
+    channel: stable/ubuntu-24.04
+
+  late-commands:
+    - curtin in-target --target=/target -- systemctl disable motd-news.timer
+    - curtin in-target --target=/target -- usermod -aG docker vidhu
+
+  shutdown: reboot
+
